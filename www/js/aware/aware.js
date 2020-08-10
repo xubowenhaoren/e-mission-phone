@@ -9,7 +9,7 @@ angular.module('emission.main.aware', [
 ]).
   controller('AwareCtrl',
     function ($scope, $state, $ionicPopup, nzTour, $ionicPopover, storage,
-              CommHelper, $sce, $cordovaInAppBrowser) {
+              CommHelper, $sce) {
     //   // Tour steps
     //   var tour = {
     //     config: {
@@ -68,13 +68,6 @@ angular.module('emission.main.aware', [
       $scope.pidPlaceholder = "pidPlaceholder";
 
       $scope.checkBattery = function () {
-        // Load AccessMap with uuid
-        // var url = $sce.trustAsResourceUrl('https://www.accessmap.io/signin');
-        // $cordovaInAppBrowser.open(url, '_system', {
-        //   location: 'no',
-        //   clearcache: 'no',
-        //   toolbar: 'yes'
-        // });
         window.checkBattery(function(result) { alert(result); }, function(err) { alert(err); });
       };
 
