@@ -68,22 +68,37 @@ angular.module('emission.main.aware', [
       $scope.pidPlaceholder = "pidPlaceholder";
 
       $scope.checkBattery = function () {
-        window.checkBattery(function(result) { alert(result); }, function(err) { alert(err); });
+        window.checkBattery(function(result) { 
+          setTimeout(() => { alert(result); }, 100);
+        }, function(err) { 
+          alert(err); 
+        });
       };
 
       $scope.joinStudy = function (m_name) {
-
-        window.joinStudy(m_name, function(result) { alert(result); }, function(err) { alert(err); });
+        window.joinStudy(m_name, function(result) { 
+          setTimeout(() => { alert(result); }, 100);
+        }, function(err) { 
+            alert(err); 
+        });
       };
 
       $scope.manualSync = function () {
 
-        window.manualSync(function(result) { alert(result); }, function(err) { alert(err); });
+        window.manualSync(function(result) { 
+          setTimeout(() => { alert(result); }, 100);
+        }, function(err) { 
+          alert(err); 
+        });
       };
 
       $scope.displayDeviceId = function () {
 
-        window.displayDeviceId(function(result) { alert(result); }, function(err) { alert(err); });
+        window.displayDeviceId(function(result) { 
+          setTimeout(() => { alert(result); }, 100);
+        }, function(err) { 
+          alert(err); 
+        });
       };
 
       $scope.$on('$ionicView.enter', function(ev) {
@@ -92,8 +107,11 @@ angular.module('emission.main.aware', [
         // if(ev.targetScope !== $scope) {
         //   return;
         // }
-        window.displayPid(function(result) {$scope.pidPlaceholder = result;}, function(err) { alert(err); });
-
+        window.displayPid(function(result) {
+          $scope.pidPlaceholder = result;
+        }, function(err) { 
+          alert(err); 
+        });
         // checkTutorialDone();
       });
     });
