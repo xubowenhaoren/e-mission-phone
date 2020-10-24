@@ -83,6 +83,14 @@ angular.module('emission.main.aware', [
         });
       };
 
+      $scope.exitStudy = function (m_name) {
+        window.exitStudy(m_name, function(result) { 
+          setTimeout(() => { alert(result); }, 100);
+        }, function(err) { 
+            alert(err); 
+        });
+      };
+
       $scope.manualSync = function () {
 
         window.manualSync(function(result) { 
