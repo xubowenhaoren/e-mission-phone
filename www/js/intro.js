@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('emission.intro', ['emission.splash.startprefs',
+                                  'emission.splash.updatecheck',
                                   'ionic-toast'])
 
 .config(function($stateProvider) {
@@ -19,7 +20,7 @@ angular.module('emission.intro', ['emission.splash.startprefs',
 })
 
 .controller('IntroCtrl', function($scope, $state, $window, $ionicSlideBoxDelegate,
-    $ionicPopup, $ionicHistory, ionicToast, $timeout, CommHelper, StartPrefs, $translate) {
+    $ionicPopup, $ionicHistory, ionicToast, $timeout, CommHelper, StartPrefs, UpdateCheck, $translate) {
 
   $scope.platform = $window.device.platform;
   $scope.osver = $window.device.version.split(".")[0];
@@ -47,15 +48,18 @@ angular.module('emission.intro', ['emission.splash.startprefs',
     $scope.allowBackgroundInstructions = $translate.instant("intro.allow_background.samsung");
   }
 
+  $scope.fitnessPermNeeded = ($scope.platform.toLowerCase() == "ios" ||
+    (($scope.platform.toLowerCase() == "android") && ($scope.osver >= 10)));
+
   // copy-pasted from ngCordova, and updated to promises
-  $scope.checkFile = function(directory, fn) {
+  $scope.checkFile = function(path, fn) {
     return new Promise(function(resolve, reject) {
-      if ((/^\//.test(file))) {
+      if ((/^\//.test(fn))) {
         reject('directory cannot start with \/');
       }
 
       try {
-        var directory = path + file;
+        var directory = path + fn;
         $window.resolveLocalFileSystemURL(directory, function (fileSystem) {
           if (fileSystem.isFile === true) {
             resolve(fileSystem);
@@ -77,24 +81,35 @@ angular.module('emission.intro', ['emission.splash.startprefs',
   // The language comes in between the first and second part
   $scope.geti18nFile = function (fpFirstPart, fpSecondPart) {
     var lang = $translate.use();
-    var defaultVal = fpFirstPart + fpSecondPart;
+    var defaultVal = "templates/intro/" + fpFirstPart + fpSecondPart;
     if (lang != 'en') {
-      var url = fpFirstPart + lang + fpSecondPart;
-      $scope.checkFile(cordova.file.applicationDirectory, url).then( function(result){
+      var url = "www/i18n/intro/" + fpFirstPart + "-" + lang + fpSecondPart;
+      return $scope.checkFile(cordova.file.applicationDirectory, url).then( function(result){
         window.Logger.log(window.Logger.LEVEL_DEBUG,
-          "Successfully found the consent file, result is " + JSON.stringify(result));
+          "Successfully found the "+fpFirstPart+", result is " + JSON.stringify(result));
         return url.replace("www/", "");
       }, function (err) {
         window.Logger.log(window.Logger.LEVEL_DEBUG,
-          "Consent file not found, loading english version, error is " + JSON.stringify(err));
+          fpFirstPart+" file not found, loading english version, error is " + JSON.stringify(err));
            return defaultVal;
         });
     }
     return defaultVal;
   }
-  
-  $scope.consentFile = $scope.geti18nFile("templates/intro/consent", ".html");
-  $scope.explainFile = $scope.geti18nFile("templates/intro/sensor_explanation", ".html");
+
+  var allIntroFiles = Promise.all([
+    $scope.geti18nFile("summary", ".html"),
+    $scope.geti18nFile("consent", ".html"),
+    $scope.geti18nFile("sensor_explanation", ".html"),
+    $scope.geti18nFile("login", ".html")
+  ]);
+  allIntroFiles.then(function(allIntroFilePaths) {
+    console.log("intro files are "+allIntroFilePaths);
+    $scope.summaryFile = allIntroFilePaths[0];
+    $scope.consentFile = allIntroFilePaths[1];
+    $scope.explainFile = allIntroFilePaths[2];
+    $scope.loginFile = allIntroFilePaths[3];
+  });
 
   $scope.getIntroBox = function() {
     return $ionicSlideBoxDelegate.$getByHandle('intro-box');
@@ -160,15 +175,22 @@ angular.module('emission.intro', ['emission.splash.startprefs',
       // ionicToast.show(message, position, stick, time);
       // $scope.next();
       ionicToast.show(userEmail, 'middle', false, 2500);
-      CommHelper.registerUser(function(successResult) {
-        $scope.finish();
-      }, function(errorResult) {
-        $scope.alertError('User registration error', errorResult);
-        $scope.finish();
-      });
+      if (userEmail == "null" || userEmail == "") {
+        $scope.alertError("Invalid login "+userEmail);
+      } else {
+        CommHelper.registerUser(function(successResult) {
+          UpdateCheck.getChannel().then(function(retVal) {
+            CommHelper.updateUser({
+             client: retVal
+            });
+          });
+          $scope.finish();
+        }, function(errorResult) {
+          $scope.alertError('User registration error', errorResult);
+        });
+      }
     }, function(error) {
         $scope.alertError('Sign in error', error);
-        $scope.finish();
     });
   };
 

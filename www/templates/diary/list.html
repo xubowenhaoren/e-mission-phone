@@ -62,9 +62,9 @@
 
                     <div ng-class="listColRightClass">
                         <div ng-if="!tripgj.isDraft">
-                            <i class="{{mode}}" ng-repeat="mode in tripgj.percentages[0]" style="font-size: 0.9em; margin-left: 0.4em; margin-right: 1em; margin-top: 0.2em;" ng-style="setColor(mode)"></i>
+                            <i class="{{sectionPct.icon}}" ng-repeat="sectionPct in tripgj.percentages" style="font-size: 0.9em; margin-left: 0.4em; margin-right: 1em; margin-top: 0.2em;" ng-style="{{sectionPct.color}}"></i>
                             <div style="margin-top: -5px;">
-                                <a ng-class="listTextClass" ng-repeat="percentage in tripgj.percentages[1]" style="font-size: 0.6em; margin-right: 0.4em;">{{percentage}}%</a>
+                                <a ng-class="listTextClass" ng-repeat="sectionPct in tripgj.percentages" style="font-size: 0.6em; margin-right: 0.4em;">{{sectionPct.pct}}%</a>
                             </div>
                         </div>
                         <button ng-if="tripgj.isDraft" class="button bg-unprocessed button-outline button-dark button-small icon-right ion-loop" ng-click="explainDraft($event)" style="font-size: 0.6em; margin-right: 0.4em" translate> {{'.draft'}} </button>
@@ -99,25 +99,25 @@
              </div>
              <div class="row" style="padding-left: 5px;padding-right: 5px;">
                 <div class="col-50" style="text-align: center;">
-                    <div ng-if="tripgj.usermode" class="mode-confirm-container">
-                        <button ng-click ="openModePopover($event, tripgj)" class="button btn-mode-confirm btn-mode-confirm-green">
-                            {{tripgj.usermode.text}}
+                    <div ng-if="tripgj.userInput.MODE" class="mode-confirm-container">
+                        <button ng-click ="openPopover($event, tripgj, 'MODE')" class="button btn-mode-confirm btn-mode-confirm-green">
+                            {{tripgj.userInput.MODE.text}}
                         </button>
                     </div>
-                    <div  ng-if="!tripgj.usermode" class="mode-confirm-container">
-                        <button ng-click ="openModePopover($event, tripgj)" class="button btn-mode-confirm btn-mode-confirm-white" translate>
+                    <div  ng-if="!tripgj.userInput.MODE" class="mode-confirm-container">
+                        <button ng-click ="openPopover($event, tripgj, 'MODE')" class="button btn-mode-confirm btn-mode-confirm-white" translate>
                         {{'.choose-mode'}}
                         </button>
                     </div>
                 </div>
                 <div class="col-50" style="text-align: center;">
-                    <div ng-if="tripgj.userpurpose" class="purpose-confirm-container">
-                        <button ng-click="openPurposePopover($event, tripgj)" class="button btn-purpose-confirm btn-purpose-confirm-green">
-                            {{tripgj.userpurpose.text}}
+                    <div ng-if="tripgj.userInput.PURPOSE" class="purpose-confirm-container">
+                        <button ng-click="openPopover($event, tripgj, 'PURPOSE')" class="button btn-purpose-confirm btn-purpose-confirm-green">
+                            {{tripgj.userInput.PURPOSE.text}}
                         </button>
                     </div>
-                    <div ng-if="!tripgj.userpurpose" class="purpose-confirm-container">
-                        <button ng-click="openPurposePopover($event, tripgj)" class="button btn-purpose-confirm btn-purpose-confirm-white" translate>
+                    <div ng-if="!tripgj.userInput.PURPOSE" class="purpose-confirm-container">
+                        <button ng-click="openPopover($event, tripgj, 'PURPOSE')" class="button btn-purpose-confirm btn-purpose-confirm-white" translate>
                         {{'.choose-purpose'}}
                         </button>
                     </div>
