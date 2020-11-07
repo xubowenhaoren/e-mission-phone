@@ -64,6 +64,7 @@ angular.module('emission.main.aware', [
       //   uuidParts.push(uuidWithNoDash.slice(20,32));
       //   return uuidParts.join('-');
       // };
+      document.getElementById("exit-study-button").addEventListener("click", dialogConfirm);
 
       $scope.pidPlaceholder = "pidPlaceholder";
 
@@ -83,13 +84,23 @@ angular.module('emission.main.aware', [
         });
       };
 
-      $scope.exitStudy = function (m_name) {
-        window.exitStudy(m_name, function(result) { 
-          setTimeout(() => { alert(result); }, 100);
-        }, function(err) { 
-            alert(err); 
-        });
-      };
+      function dialogConfirm() {
+        var message = "Exit Study?";
+        var title = "Confirm Exit Study";
+        var buttonLabels = "YES,NO";
+        navigator.notification.confirm(message, confirmCallback, title, buttonLabels);
+     
+        function confirmCallback(buttonIndex) {
+          if (buttonIndex == 1) {
+            window.exitStudy(buttonIndex, function(result) { 
+              setTimeout(() => { alert(result); }, 100);
+            }, function(err) { 
+                alert(err); 
+            });
+          }       
+        }
+       
+     }
 
       $scope.manualSync = function () {
 
