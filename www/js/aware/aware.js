@@ -64,7 +64,6 @@ angular.module('emission.main.aware', [
       //   uuidParts.push(uuidWithNoDash.slice(20,32));
       //   return uuidParts.join('-');
       // };
-      document.getElementById("exit-study-button").addEventListener("click", dialogConfirm);
 
       $scope.pidPlaceholder = "pidPlaceholder";
 
@@ -84,23 +83,23 @@ angular.module('emission.main.aware', [
         });
       };
 
-      function dialogConfirm() {
-        var message = "Exit Study?";
-        var title = "Confirm Exit Study";
-        var buttonLabels = "YES,NO";
-        navigator.notification.confirm(message, confirmCallback, title, buttonLabels);
-     
-        function confirmCallback(buttonIndex) {
-          if (buttonIndex == 1) {
-            window.exitStudy(buttonIndex, function(result) { 
+      // A confirm dialog
+      $scope.exitStudy = function() {
+        var confirmPopup = $ionicPopup.confirm({
+          title: 'Confirm Exit Study',
+          template: 'Are you sure you want to exit the AWARE study? Your Emission study will not be affected.'
+        });
+
+        confirmPopup.then(function(res) {
+          if(res) {
+            window.exitStudy(res, function(result) { 
               setTimeout(() => { alert(result); }, 100);
             }, function(err) { 
                 alert(err); 
             });
-          }       
-        }
-       
-     }
+          }
+        });
+      };
 
       $scope.manualSync = function () {
 
